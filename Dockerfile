@@ -1,5 +1,11 @@
-FROM openjdk:11
-ARG JAR_FILE=target/post-sharing-be-0.0.1-SNAPSHOT.jar
-ADD ${JAR_FILE} post-sharing-be-0.0.1-SNAPSHOT.jar
-EXPOSE 8080
-ENTRYPOINT ["java", "-jar" , "post-sharing-be-0.0.1-SNAPSHOT.jar"]
+# Step 1: Build the Java application using Maven
+FROM maven:3.8.6-openjdk-11 AS build
+WORKDIR /app
+COPY . .
+RUN mvn clean install -DskipTests
+
+# Step 2: Create a lightweight Java runtime container
+FROM openjdk:11-jre
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
+CMD ["java", "-jar", "app.jar"]

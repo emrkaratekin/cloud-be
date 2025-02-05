@@ -8,22 +8,10 @@
 
 ### How to run
 
+### copy and paste those codes and it will start working.
+
+docker-compose build --no-cache
+docker-compose up --force-recreate
 
 
-#### create jar
-
-```bash
-  mvn clean install -DskipTests
-```
-
-#### build docker-compose
-
-```bash
-  docker-compose build --no-cache
-```
-
-#### run docker-compose
-
-```bash
-  docker-compose up --force-recreate
-```
+### after that start frontend application read the md file there.

@@ -1,4 +1,3 @@
-version: '3'
 services:
   mongodb:
     image: 'mongo'
@@ -9,6 +8,7 @@ services:
       - ./data:/data/db
     networks:
       - shared-net
+
   mongo-express:
     container_name: mongo-express
     image: mongo-express
@@ -23,20 +23,17 @@ services:
     restart: always
     volumes:
       - ./data:/data/db
+
   app:
-    image: backend
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: .
     ports:
       - "8080:8080"
     restart: always
-    links:
-      - mongodb
     depends_on:
       - mongodb
     networks:
       - shared-net
+
 networks:
   shared-net:
     driver: bridge
