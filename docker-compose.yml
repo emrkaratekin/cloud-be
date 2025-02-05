@@ -1,17 +1,24 @@
+version: '3.8'
+
 services:
   mongodb:
     image: 'mongo'
-    ports:
-      - 27017:27017
     container_name: mongodb
+    ports:
+      - "27017:27017"
     volumes:
       - ./data:/data/db
     networks:
       - shared-net
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh mongodb:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   mongo-express:
-    container_name: mongo-express
     image: mongo-express
+    container_name: mongo-express
     depends_on:
       - mongodb
     networks:
@@ -19,20 +26,22 @@ services:
     environment:
       - ME_CONFIG_MONGODB_SERVER=mongodb
     ports:
-      - '8081:8081'
+      - "8081:8081"
     restart: always
-    volumes:
-      - ./data:/data/db
 
   app:
     build: .
+    container_name: backend-app
     ports:
       - "8080:8080"
     restart: always
     depends_on:
-      - mongodb
+      mongodb:
+        condition: service_healthy
     networks:
       - shared-net
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/postsharing
 
 networks:
   shared-net:
